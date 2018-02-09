@@ -1,32 +1,35 @@
 import React, { Component } from 'react';
+import { Filler, TableHeader } from './Misc';
 import Stock from './Stock';
 import { connect } from 'react-redux';
-import { removeStock } from '../actions/index.js';
+import * as actions from '../actions/index.js';
 
 class Portfolio extends Component {
+	componentDidMount() {
+		this.fetchData();
+	}
+
+	fetchData() {
+		const { fetchStocks } = this.props;
+		fetchStocks();
+	}
+
 	render() {
-		const { stocks, onBtnClick } = this.props;
+		const { stocks, removeStock } = this.props;
 		if (stocks.length === 0) {
-			return <div></div>;
+			return <Filler />;
 		} else {
 			return (
 				<div className='row'>
 					<div className='col-6'>
 						<table className='table table-striped table-sm mt-3'>
-							<thead>
-								<tr>
-									<th scope='col'></th>
-									<th scope='col'>Symbol</th>
-									<th scope='col'>Price</th>
-									<th scope='col'>Change %</th>
-								</tr>
-							</thead>
+							<TableHeader />
 							<tbody>
 								{stocks.map(stock =>
 									<Stock 
 										key={stock.symbol}
 										{...stock}
-										onBtnClick={onBtnClick}
+										onBtnClick={removeStock}
 									/>
 								)}
 							</tbody>
@@ -39,18 +42,12 @@ class Portfolio extends Component {
 }
 
 const mapStateToProps = (state) => ({
-	stocks: state
-});
-
-const mapDispatchToProps = (dispatch) => ({
-	onBtnClick(symbol) {
-		dispatch(removeStock(symbol));
-	}
+	stocks: state.stocks
 });
 
 Portfolio = connect(
 	mapStateToProps,
-	mapDispatchToProps
+	actions
 )(Portfolio)
 
 export default Portfolio;

@@ -1,5 +1,5 @@
 {
-  "name": "react-express",
+  "name": "portfolio",
   "version": "0.0.0",
   "private": true,
   "scripts": {
@@ -9,6 +9,7 @@
   "dependencies": {
     "body-parser": "~1.18.2",
     "express": "~4.15.5",
+    "lodash": "^4.17.5",
     "nodemon": "^1.14.12",
     "uuid": "^3.2.1"
   }

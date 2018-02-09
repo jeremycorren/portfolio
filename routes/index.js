@@ -6,19 +6,30 @@ const router = express.Router();
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: false }));
 
-const data = [{
-	id: id(),
-	username: "jcorren"
-}];
+let database = [];
 
-router.get('/users', function(req, res, next) {
-  res.json(data);
+router.get('/', function(req, res, next) {
+  res.json(database);
 });
 
-router.post('/users', function(req, res, next) {
-	const username = req.body.username
-	data.push({ id: id(), username });
-	res.json(data);
+router.post('/', function(req, res, next) {
+	const stock = req.body;
+	database.push({
+		symbol: stock.symbol,
+		price: stock.latestPrice,
+		changePercent: stock.changePercent,
+		marketCap: stock.marketCap,
+		peRatio: stock.peRatio
+	});
+	res.json(database);
+});
+
+router.post('/delete', function(req, res, next) {
+	const { symbol } = req.body;
+	database = database.filter(stock => {
+		return stock.symbol !== symbol;
+	});
+	res.json(database);
 });
 
 module.exports = router;

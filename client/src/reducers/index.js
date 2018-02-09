@@ -1,15 +1,24 @@
-const stocks = (state = [], action) => {
+import { combineReducers } from 'redux';
+
+let stocks = (state = [], action) => {
 	switch (action.type) {
-		case 'ADD_STOCK':
-			const { type, ...rest } = action;
-			return [...state, rest];
-		case 'REMOVE_STOCK':
-			return [...state].filter(stock => {
-				return stock.symbol !== action.symbol;
+		case 'RECEIVE_STOCKS':
+			const nextState = [...state];
+			action.stocks.forEach(stock => {
+				nextState.push(stock);
 			});
+			return nextState;
+		case 'ADD_STOCK':
+			return action.stocks;
+		case 'DELETE_STOCK':
+			return action.stocks;
 		default:
 			return state;
 	}
 };
+
+stocks = combineReducers({
+	stocks
+});
 
 export default stocks;
