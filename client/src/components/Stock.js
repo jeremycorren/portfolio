@@ -7,19 +7,34 @@ class Stock extends Component {
 		const { dispatch, onBtnClick, ...stock } = this.props;
 		return (
 			<tr onClick={() => dispatch(selectStock(stock))}>
-				<td>
+				<td style={{textAlign: 'center'}}>
 					<button
-						className='btn btn-danger'
+						className='btn btn-secondary btn-sm'
+						style={{
+							padding: '.10rem',
+    					fontSize: '.575rem',
+    					lineHeight: '.5',
+    					borderRadius: '.2rem'
+						}}
 						onClick={(event) => { 
 							event.stopPropagation();
 							onBtnClick(stock.symbol);
 						}
 					}>
+						<span 
+							className='oi oi-minus' 
+							aria-hidden='true'></span>
 					</button>
 				</td>
 				<td>{stock.symbol}</td>
 				<td>{stock.price}</td>
-				<td>{formatPercent(stock.changePercent)}</td>
+				<td className={
+					stock.changePercent > 0
+						? 'text-success'
+						: 'text-danger'
+				}>
+					{formatPercent(stock.changePercent)}
+				</td>
 			</tr>
 		);
 	}

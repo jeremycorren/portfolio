@@ -13,26 +13,30 @@ router.get('/get', function(req, res, next) {
 });
 
 router.post('/add', function(req, res, next) {
-	const stock = req.body;
+	const { quote, company } = req.body;
+	
 	let isDuplicate = false;
-
-	// todo: optimize with Array.some
 	database.forEach(s => {
-		if (s.symbol === stock.symbol) {
+		if (s.companyName === company.companyName) {
 			isDuplicate = true;
 		}
 	});
 
 	if (!isDuplicate) {
 		database.push({
-			symbol: stock.symbol,
-			price: stock.latestPrice,
-			changePercent: stock.changePercent,
-			marketCap: stock.marketCap,
-			peRatio: stock.peRatio
+			symbol: quote.symbol,
+			companyName: quote.companyName,
+			industry: company.industry,
+			website: company.website,
+			primaryExchange: quote.primaryExchange,
+			price: quote.latestPrice,
+			changePercent: quote.changePercent,
+			marketCap: quote.marketCap,
+			peRatio: quote.peRatio,
+			description: company.description,
 		});
 	}
-	res.json(database);
+	res.json({ stocks: database, isDuplicate });
 });
 
 router.post('/delete', function(req, res, next) {

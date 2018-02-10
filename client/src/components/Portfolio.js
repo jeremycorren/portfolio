@@ -4,11 +4,19 @@ import Stock from './Stock';
 import { connect } from 'react-redux';
 import * as actions from '../actions/index';
 import * as Message from './Messages';
-import { getStocks, getIsFetching, getErrorMessage } from '../reducers/index';
+import * as Selector from '../reducers/index';
 
 class Portfolio extends Component {
-	componentDidMount() {
+	componentDidMount() {		
+		this.register();
 		this.fetchData();
+	}
+
+	register() {
+		const { symbols, fetchSymbols } = this.props;
+		if (symbols.length === 0) {
+			fetchSymbols();
+		}
 	}
 
 	fetchData() {
@@ -45,9 +53,10 @@ class Portfolio extends Component {
 }
 
 const mapStateToProps = (state) => ({
-	stocks: getStocks(state),
-	isFetching: getIsFetching(state),
-	errorMessage: getErrorMessage(state)
+	stocks: Selector.getStocks(state),
+	isFetching: Selector.getIsFetching(state),
+	errorMessage: Selector.getErrorMessage(state),
+	symbols: Selector.getSymbols(state)
 });
 
 Portfolio = connect(

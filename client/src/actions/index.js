@@ -7,20 +7,35 @@ const requestFailure = (error) => ({
 	error: error.toString()
 });
 
-export const fetchStocks = () => {
+const registerSymbols = (symbols) => ({
+	type: 'REGISTER_SYMBOLS',
+	symbols
+});
+
+export const fetchSymbols = () => {
 	return (dispatch) => {
-		dispatch(requestStocks);
-		return fetch('/api/get')
-			.then(response => response.json())
-			.then(stocks => dispatch({
-				type: 'FETCH_STOCKS',
-				stocks
-			}))
-			.catch(error => dispatch(requestFailure(error)))
-	};
+		fetch('https://api.iextrading.com/1.0/ref-data/symbols')
+			.then(res => res.json())
+			.then(data => {
+				const symbols = data
+					.filter(stock => stock.isEnabled)
+					.map(stock => stock.symbol);
+				dispatch(registerSymbols(symbols));
+			});
+	}
 };
 
-export const addStock = (data) => {
+export const findStock = (input) => {
+	return (dispatch) => {
+		fetch(`https://api.iextrading.com/1.0/stock/${input}/batch?types=quote,company,logo`)
+			.then(res => res.json())
+			.then(data => {
+				dispatch(addStock(data));
+			});
+	}
+}
+
+const addStock = (data) => {
 	return (dispatch) => {
 		dispatch(requestStocks);
 		return fetch('/api/add', {
@@ -30,8 +45,26 @@ export const addStock = (data) => {
 			}),
 			body: JSON.stringify(data)
 		}).then(response => response.json())
+			.then(data => {
+				const { stocks, isDuplicate } = data;
+				
+				dispatch({
+					type: 'ADD_STOCK',
+					stocks,
+					isDuplicate
+				});
+			})
+			.catch(error => dispatch(requestFailure(error)))
+	};
+};
+
+export const fetchStocks = () => {
+	return (dispatch) => {
+		dispatch(requestStocks);
+		return fetch('/api/get')
+			.then(response => response.json())
 			.then(stocks => dispatch({
-				type: 'ADD_STOCK',
+				type: 'FETCH_STOCKS',
 				stocks
 			}))
 			.catch(error => dispatch(requestFailure(error)))
@@ -49,17 +82,10 @@ export const removeStock = (symbol) => {
 			body: JSON.stringify({ symbol })
 		}).then(response => response.json())
 			.then(stocks => {
-				if (stocks.length === 0) {
-					dispatch({
-						type: 'CLEAR_DETAIL'
-					});
-				}
-
 				dispatch({
-					type: 'CHANGE_DETAIL',
+					type: 'UPDATE_DETAIL',
 					stocks
 				});
-
 				dispatch({
 					type: 'DELETE_STOCK',
 					stocks
