@@ -1,11 +1,11 @@
 import React from 'react';
 
-export const Filler = () => (
+export const Filler = ({ message, color }) => (
 	<div>
 		<hr />
-		<div style={{color: 'grey'}}>
-			There are no securities in your portfolio.
-		</div>
+		<p style={{color: color}}>
+			{message}
+		</p>
 	</div>
 );
 

@@ -1,37 +1,46 @@
-const receiveStocks = (stocks) => ({
-	type: 'RECEIVE_STOCKS',
-	stocks
+const requestStocks = {
+	type: 'REQUEST_STOCKS'
+};
+
+const requestFailure = (error) => ({
+	type: 'REQUEST_FAILURE',
+	error: error.toString()
 });
 
 export const fetchStocks = () => {
 	return (dispatch) => {
-		return fetch('/api')
+		dispatch(requestStocks);
+		return fetch('/api/get')
 			.then(response => response.json())
-			.catch(err => alert('Server error'))
-			.then(stocks => dispatch(receiveStocks(stocks)));
+			.then(stocks => dispatch({
+				type: 'FETCH_STOCKS',
+				stocks
+			}))
+			.catch(error => dispatch(requestFailure(error)))
 	};
 };
 
 export const addStock = (data) => {
 	return (dispatch) => {
-		return fetch('/api', {
+		dispatch(requestStocks);
+		return fetch('/api/add', {
 			method: 'post',
 			headers: new Headers({
 				'content-type': 'application/json'
 			}),
 			body: JSON.stringify(data)
 		}).then(response => response.json())
-			.then(stocks => {
-				dispatch({
-					type: 'ADD_STOCK',
-					stocks
-				})
-			});
+			.then(stocks => dispatch({
+				type: 'ADD_STOCK',
+				stocks
+			}))
+			.catch(error => dispatch(requestFailure(error)))
 	};
 };
 
 export const removeStock = (symbol) => {
 	return (dispatch) => {
+		dispatch(requestStocks);
 		return fetch('/api/delete', {
 			method: 'post',
 			headers: new Headers({
@@ -40,10 +49,31 @@ export const removeStock = (symbol) => {
 			body: JSON.stringify({ symbol })
 		}).then(response => response.json())
 			.then(stocks => {
+				if (stocks.length === 0) {
+					dispatch({
+						type: 'CLEAR_DETAIL'
+					});
+				}
+
+				dispatch({
+					type: 'CHANGE_DETAIL',
+					stocks
+				});
+
 				dispatch({
 					type: 'DELETE_STOCK',
 					stocks
-				})
-			});
+				});
+			})
+			.catch(error => dispatch(requestFailure(error)))
+	};
+};
+
+export const selectStock = (stock) => {
+	return (dispatch) => {
+		dispatch({
+			type: 'SELECT_STOCK',
+			stock
+		});
 	};
 };
