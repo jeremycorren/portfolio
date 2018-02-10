@@ -2,12 +2,23 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { findStock } from '../actions/index.js';
 import { getSymbols } from '../reducers/index';
+import * as Message from './Messages';
 
 let AddStock = ({ dispatch, symbols }) => {
 	let input;
 	return (
 		<div>
-			<h3>Build</h3>
+			<h5 
+				className='display-4 mb-3'
+				style={{fontSize: '2rem'}}
+			>
+				Build
+			</h5>
+			<p
+				className='lead'
+				style={{fontSize: '1.15rem', width: '400px'}}>
+				{Message.BUILD_INFO}
+			</p>
 			<form
 				onSubmit={(event) => {
 					event.preventDefault();
@@ -33,6 +44,7 @@ let AddStock = ({ dispatch, symbols }) => {
 						display: 'inline-block'
 					}}/>
 				<button
+					title='Add'
 					className='btn btn-info btn-sm'
 				>
 					<span 

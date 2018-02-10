@@ -27,7 +27,7 @@ export const fetchSymbols = () => {
 
 export const findStock = (input) => {
 	return (dispatch) => {
-		fetch(`https://api.iextrading.com/1.0/stock/${input}/batch?types=quote,company,logo`)
+		fetch(`https://api.iextrading.com/1.0/stock/${input}/batch?types=quote,company,financials,chart`)
 			.then(res => res.json())
 			.then(data => {
 				dispatch(addStock(data));
@@ -47,7 +47,7 @@ const addStock = (data) => {
 		}).then(response => response.json())
 			.then(data => {
 				const { stocks, isDuplicate } = data;
-				
+
 				dispatch({
 					type: 'ADD_STOCK',
 					stocks,

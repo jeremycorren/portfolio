@@ -6,7 +6,10 @@ class Stock extends Component {
 	render() {
 		const { dispatch, onBtnClick, ...stock } = this.props;
 		return (
-			<tr onClick={() => dispatch(selectStock(stock))}>
+			<tr 
+				title='Show detail'
+				onClick={() => dispatch(selectStock(stock))}
+			>
 				<td style={{textAlign: 'center'}}>
 					<button
 						className='btn btn-secondary btn-sm'
@@ -21,7 +24,8 @@ class Stock extends Component {
 							onBtnClick(stock.symbol);
 						}
 					}>
-						<span 
+						<span
+							title='Delete'
 							className='oi oi-minus' 
 							aria-hidden='true'></span>
 					</button>
