@@ -2,11 +2,11 @@ const express = require('express');
 const path = require('path');
 
 const app = express();
-app.use(express.static(path.join(__dirname, 'client/public')));
+app.use(express.static(path.join(__dirname, 'client/build')));
 app.use('/api', require('./routes/index'));
 
 app.get('*', (req, res) => {
-	res.sendFile(path.join(__dirname + '/client/public/index.html'));
+	res.sendFile(path.join(__dirname + '/client/build/index.html'));
 });
 
 app.use((req, res, next) => {
