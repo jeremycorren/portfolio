@@ -13,8 +13,8 @@ class Portfolio extends Component {
 	}
 
 	register() {
-		const { symbols, fetchSymbols } = this.props;
-		if (symbols.length === 0) {
+		const { symbolMap, fetchSymbols } = this.props;
+		if (symbolMap.length === 0) {
 			fetchSymbols();
 		}
 	}
@@ -56,7 +56,7 @@ const mapStateToProps = (state) => ({
 	stocks: Selector.getStocks(state),
 	isFetching: Selector.getIsFetching(state),
 	errorMessage: Selector.getErrorMessage(state),
-	symbols: Selector.getSymbols(state)
+	symbolMap: Selector.getSymbolMap(state)
 });
 
 Portfolio = connect(

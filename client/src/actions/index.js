@@ -1,15 +1,15 @@
-const requestStocks = {
+const requestStocks = () => ({
 	type: 'REQUEST_STOCKS'
-};
+});
 
 const requestFailure = (error) => ({
 	type: 'REQUEST_FAILURE',
 	error: error.toString()
 });
 
-const registerSymbols = (symbols) => ({
+const registerSymbols = (symbolMap) => ({
 	type: 'REGISTER_SYMBOLS',
-	symbols
+	symbolMap
 });
 
 export const fetchSymbols = () => {
@@ -17,10 +17,10 @@ export const fetchSymbols = () => {
 		fetch('https://api.iextrading.com/1.0/ref-data/symbols')
 			.then(res => res.json())
 			.then(data => {
-				const symbols = data
-					.filter(stock => stock.isEnabled)
-					.map(stock => stock.symbol);
-				dispatch(registerSymbols(symbols));
+				const symbolMap = {};
+				data.filter(stock => stock.isEnabled)
+						.forEach(stock => symbolMap[stock.name] = stock.symbol);
+				dispatch(registerSymbols(symbolMap));
 			});
 	}
 };
@@ -37,7 +37,7 @@ export const findStock = (input) => {
 
 const addStock = (data) => {
 	return (dispatch) => {
-		dispatch(requestStocks);
+		dispatch(requestStocks());
 		return fetch('/api/add', {
 			method: 'post',
 			headers: new Headers({
@@ -46,12 +46,10 @@ const addStock = (data) => {
 			body: JSON.stringify(data)
 		}).then(response => response.json())
 			.then(data => {
-				const { stocks, isDuplicate } = data;
-
+				const { stocks } = data;
 				dispatch({
 					type: 'ADD_STOCK',
-					stocks,
-					isDuplicate
+					stocks
 				});
 			})
 			.catch(error => dispatch(requestFailure(error)))
@@ -60,7 +58,7 @@ const addStock = (data) => {
 
 export const fetchStocks = () => {
 	return (dispatch) => {
-		dispatch(requestStocks);
+		dispatch(requestStocks());
 		return fetch('/api/get')
 			.then(response => response.json())
 			.then(stocks => dispatch({
@@ -73,7 +71,7 @@ export const fetchStocks = () => {
 
 export const removeStock = (symbol) => {
 	return (dispatch) => {
-		dispatch(requestStocks);
+		dispatch(requestStocks());
 		return fetch('/api/delete', {
 			method: 'post',
 			headers: new Headers({
@@ -100,6 +98,14 @@ export const selectStock = (stock) => {
 		dispatch({
 			type: 'SELECT_STOCK',
 			stock
+		});
+	};
+};
+
+export const clearDetail = () => {
+	return (dispatch) => {
+		dispatch({
+			type: 'CLEAR_DETAIL'
 		});
 	};
 };

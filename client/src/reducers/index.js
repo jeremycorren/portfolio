@@ -9,10 +9,6 @@ const stocks = (state = [], action) => {
 			});
 			return nextState;
 		case 'ADD_STOCK':
-			if (action.isDuplicate) {
-				alert('This security is already in your portfolio.');
-				return state;
-			}
 			return action.stocks;
 		case 'DELETE_STOCK':
 			return action.stocks;
@@ -34,15 +30,17 @@ const detail = (state = null, action) => {
 				}
 			}
 			return state;
+		case 'CLEAR_DETAIL': console.log('reducer got it')
+			return null;
 		default:
 			return state;
 	}
 };
 
-const symbols = (state = [], action) => {
+const symbolMap = (state = [], action) => {
 	switch (action.type) {
 		case 'REGISTER_SYMBOLS':
-			return action.symbols;
+			return action.symbolMap;
 		default:
 			return state;
 	}
@@ -79,14 +77,14 @@ const errorMessage = (state = null, action) => {
 const reducer = combineReducers({
 	stocks,
 	detail,
-	symbols,
+	symbolMap,
 	isFetching,
 	errorMessage
 });
 
 export const getStocks = (state) => state.stocks;
 export const getDetail = (state) => state.detail;
-export const getSymbols = (state) => state.symbols;
+export const getSymbolMap = (state) => state.symbolMap;
 export const getIsFetching = (state) => state.isFetching;
 export const getErrorMessage = (state) => state.errorMessage;
 

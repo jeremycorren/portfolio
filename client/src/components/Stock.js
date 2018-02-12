@@ -44,9 +44,17 @@ class Stock extends Component {
 	}
 }
 
-Stock = connect()(Stock)
-
-const formatPercent = (percent) => 
-	Number.parseFloat(percent * 100).toFixed(2);
+Stock = connect()(Stock);
 
 export default Stock;
+
+const formatPercent = (percent) => {
+	const formattedPercent = Number
+		.parseFloat(percent * 100)
+		.toFixed(2);
+	if (formattedPercent > 0) {
+		return '+' + formattedPercent;
+	} else {
+		return formattedPercent;
+	}
+}

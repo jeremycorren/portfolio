@@ -1,18 +1,20 @@
 import React, { Component } from 'react';
+import DetailStats from './DetailStats';
 import * as actions from '../actions/index';
 import { connect } from 'react-redux';
-import { getDetail, getStocks } from '../reducers/index';
+import { getDetail } from '../reducers/index';
 import { Line } from 'react-chartjs-2';
 
 class Detail extends Component {
 	render() {
-		const { detail, stocks } = this.props;
+		const { detail, clearDetail } = this.props;
+
 		if (detail != null) {
 			const { chart } = detail;
 			const chartData = {
 				labels: chart.map(dataPoint => formatDate(dataPoint.date)),
 				datasets: [{
-					label: ['Share Price (1m)'],
+					label: ['Share Price'],
 					backgroundColor: 'rgba(75,192,192,0.4)',
       		borderColor: 'rgba(75,192,192,1)',
 		      pointBorderColor: 'rgba(75,192,192,1)',
@@ -29,45 +31,44 @@ class Detail extends Component {
 				<div className='card'>
 					<div className='card-body'>
 						<h4 className='card-title'>
-							<a href={detail.website} className='card-link'>{detail.companyName}</a>
+							<a 
+								href={detail.website} 
+								className='card-link'
+								style={{display: 'inline-block'}}
+							>
+								{detail.companyName}
+							</a>
+							<button
+								className='btn btn-secondary btn-sm'
+								style={{
+									padding: '.10rem',
+		    					fontSize: '.575rem',
+		    					lineHeight: '.5',
+		    					borderRadius: '.2rem',
+		    					float: 'right'
+								}}
+								onClick={clearDetail}
+							>
+								<span
+									title='Clear'
+									className='oi oi-minus' 
+									aria-hidden='true'></span>
+							</button>
 						</h4>
 						<h6 className='subtitle mb-2 text-muted'>{detail.industry}</h6>
-						<ul className='card-text'>
-							<li>
-								<strong>Market Capitalization: </strong> 
-								{formatCurrency(detail.marketCap)}
-							</li>
-							<li>
-								<strong>Total Revenue: </strong> 
-								{formatCurrency(detail.totalRevenue)}
-							</li>
-							<li>
-								<strong>Net Income: </strong> 
-								{formatCurrency(detail.netIncome)}
-							</li>
-							<li>
-								<strong>Price-to-Earnings Ratio: </strong> 
-								{detail.peRatio}
-							</li>
-						</ul>
-						<p className='card-text'>{detail.description}</p>
-						<hr />
+						<DetailStats detail={detail} />
 						<Line data={chartData} />
 					</div>
 				</div>
 			);
-		} else if (stocks.length > 0) {
-			return <div>Select a security to view its detail.</div>;
 		} else {
 			return null;
 		}
 	}
-	
 }
 
 const mapStateToProps = (state) => ({
-	detail: getDetail(state),
-	stocks: getStocks(state)
+	detail: getDetail(state)
 });
 
 Detail = connect(
@@ -76,14 +77,6 @@ Detail = connect(
 )(Detail)
 
 export default Detail;
-
-const formatCurrency = (num) => {
-	return new Intl.NumberFormat('en-US', {
-		style: 'currency',
-		currency: 'USD',
-		maximumFractionDigits: 3
-	}).format(num).split('.')[0];
-};
 
 const formatDate = (date) => {
 	return new Date(date).toLocaleDateString('en-US', {
